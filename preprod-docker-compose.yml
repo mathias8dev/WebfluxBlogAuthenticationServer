@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  preprod-webfluxblog-authentication-server-service: # The name of the service
+    container_name: preprod-webfluxblog-authentication-server-service  # Setting the container name
+    image: preprod-webfluxblog-authentication-server-service-local-image
+    restart: always # Always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8114:8114" # Map The current port
+    networks:
+      - preprod-webfluxblog-network-overlay
+    volumes:
+      - preprod-webfluxblog-authentication-server-service-local-volume:/uploads
+      - /root/logs:/usr/app/logs
+    environment:
+      spring.profiles.active: preprod
+
+
+networks:
+  preprod-webfluxblog-network-overlay:
+    external: true
+
+volumes:
+  preprod-webfluxblog-authentication-server-service-local-volume:
+    name: preprod-webfluxblog-authentication-server-service-local-volume
+
+# To build, docker-compose up --build -d or generally ./gradlew bootJar && docker-compose up --build -d

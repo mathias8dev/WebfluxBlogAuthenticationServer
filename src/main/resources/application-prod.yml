@@ -1,0 +1,87 @@
+debug: false
+
+server:
+  port: 8113
+  error:
+    include-message: always
+    include-exception: true
+    include-binding-errors: always
+    include-stacktrace: always
+  shutdown: graceful
+
+
+spring:
+  application:
+    name: authentication-server-service
+  threads:
+    virtual:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+  datasource:
+    url: jdbc:postgresql://prod-webfluxblog-postgresqlserver:5432/wb__authentication_server
+    username: postgres
+    password: postgres
+  sql:
+    init:
+      mode: always
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+
+  data:
+    web:
+      pageable:
+        size-parameter: pageSize
+        page-parameter: page
+        default-page-size: 20
+        one-indexed-parameters: false
+        max-page-size: 2000
+        prefix: ''
+        qualifier-delimiter: _
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://prod-webfluxblog-authorization-server-service:8110/oauth2/jwks
+          issuer-uri: http://prod-webfluxblog-authorization-server-service:8110
+
+
+
+logging:
+  level:
+    root: INFO
+    com.mathias8dev: TRACE
+    org.springframework.jdbc: DEBUG
+    org.springframework.security: trace
+  file:
+    name: ./logs/prod-${spring.application.name}.log
+
+
+# Eureka client
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://prod-webfluxblog-eureka-server-service:8083/eureka
+  instance:
+    hostname: prod-webfluxblog-eureka-server-service
+    prefer-ip-address: true
+
+
+
+webfluxblog:
+  authentication:
+    registered-client-credentials: authorization-server-username:authorization-server-username-password
+  gateway:
+    baseurl: http://prod-webfluxblog-gateway-service:8080
+    api-url: http://prod-webfluxblog-gateway-service:8080/api
+
+
+
